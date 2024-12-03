@@ -2,21 +2,33 @@
 const load = typeof window !== 'undefined' && localStorage.getItem('ingredients') ? JSON.parse(localStorage.getItem('ingredients')) : []
 
 let ingredients = $state(load)
+let totalCalories = $state(ingredients.reduce((acc, v) =>  acc + v.calories, 0))
+let totalProtein = $state(ingredients.reduce((acc, v) =>  acc + v.protein, 0))
+let totalPrice = $state(ingredients.reduce((acc, v) =>  acc + v.price, 0))
 
     $effect(() => {
             typeof window !== 'undefined' && localStorage.setItem('ingredients', JSON.stringify(ingredients))
             })
 
+function compute() {
+    totalCalories = ingredients.reduce((acc, v) =>  acc + v.calories, 0)
+        totalProtein = ingredients.reduce((acc, v) =>  acc + v.protein, 0)
+        totalPrice = ingredients.reduce((acc, v) =>  acc + v.price, 0)
+}
+
 function addIngredient() {
     ingredients.push({ name, img, amount, unit, calories, protein, price })
+    compute()
 }
 
 function deleteIngredient(name) {
     ingredients = ingredients.filter(i => i.name !== name)
+    compute()
 }
 
 function clear() {
     ingredients = []
+    compute()
 }
 
 let name = $state()
@@ -70,6 +82,15 @@ let price = $state()
 </div>
 </div>
 {/each}
+</div>
+
+<div class="text-orange-800 p-8 max-w-5xl md:flex justify-between items-center mx-auto">
+<h2 class="text-3xl text-center mb-4 md:mb-0">Your gain:</h2>
+<div class="flex justify-between md:w-[80%] gap-4 items-center">
+<h3 class="md:text-xl">{totalCalories} Calories</h3>
+<h3 class="md:text-xl">{totalProtein} Proteins</h3>
+<h3 class="md:text-xl">Total Price {totalPrice}</h3>
+</div>
 </div>
 
 <div class="flex justify-center gap-4">
